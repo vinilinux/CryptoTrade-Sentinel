@@ -6,35 +6,30 @@ import java.util.ArrayList;
 
 public class Validacao {
     public static String isValidTransation(TransactionDTO transactionDTO) {
-        ArrayList<String> errorMsg = new ArrayList<>();
-        errorMsg.add(validaUser(transactionDTO.user()));
-        errorMsg.add(validaId(transactionDTO.id()));
-        errorMsg.add(validaHas(transactionDTO.hash()));
-        errorMsg.add(validaCoin(transactionDTO.coin()));
-        errorMsg.add(validaValue(transactionDTO.value()));
-
-        return errorMsg.toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(validaUser(transactionDTO.user()));
+        stringBuilder.append(validaHash(transactionDTO.hash()));
+        return stringBuilder.toString();
     }
 
-    private static String validaValue(String value) {
-        return null;
-    }
+    private static String validaHash(String hash) {
+        boolean isNoValid = hash.codePoints().noneMatch(cp ->
+                Character.isISOControl(cp) ||
+                        Character.getType(cp) == Character.MATH_SYMBOL ||
+                        Character.isEmoji(cp)
 
-    private static String validaCoin(String coin) {
-
-        return null;
-    }
-
-    private static String validaHas(String hash) {
-        return null;
-    }
-
-    private static String validaId(String id) {
-        return null;
+        );
+        return isNoValid ? "Hash invalido": "";
     }
 
     private static String validaUser(String user) {
-        return null;
+        boolean isNoValid = user.codePoints().anyMatch(cp ->
+                            Character.isISOControl(cp) ||
+                            Character.isAlphabetic(cp) ||
+                            Character.getType(cp) == Character.MATH_SYMBOL ||
+                                    Character.isEmoji(cp)
+        );
+        return isNoValid ? "Usuário invalido" : "";
     }
 
 }

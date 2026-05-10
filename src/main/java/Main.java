@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 public class Main {
 
     public static void main(String[] args) {
-        String payload = "USER:  123|  ID  :acc_br_99|VAL:1500,75|COIN:BTC|HASH:  7a8b9c";
+        String payload = "USER:  123|ID  :acc_br_99|VAL:1500,75|COIN:BTC|HASH:  7a8b9c";
         double limite = 10000;
         TransactionDTO transactionDTO = Mapper.parsePayload(payload);
 

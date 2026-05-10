@@ -13,23 +13,11 @@ public class Validacao {
     }
 
     private static String validaHash(String hash) {
-        boolean isNoValid = hash.codePoints().noneMatch(cp ->
-                Character.isISOControl(cp) ||
-                        Character.getType(cp) == Character.MATH_SYMBOL ||
-                        Character.isEmoji(cp)
-
-        );
-        return isNoValid ? "Hash invalido": "";
+        return hash.codePoints().allMatch(Character::isLetterOrDigit) ? "": "Hash invalido";
     }
 
     private static String validaUser(String user) {
-        boolean isNoValid = user.codePoints().anyMatch(cp ->
-                            Character.isISOControl(cp) ||
-                            Character.isAlphabetic(cp) ||
-                            Character.getType(cp) == Character.MATH_SYMBOL ||
-                                    Character.isEmoji(cp)
-        );
-        return isNoValid ? "Usuário invalido" : "";
+        return user.codePoints().allMatch(Character::isDigit) ? "" : "Usuário invalido";
     }
 
 }

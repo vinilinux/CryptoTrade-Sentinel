@@ -1,4 +1,5 @@
 import DTOs.TransactionDTO;
+import DTOs.ValidationResult;
 import Utils.Mapper;
 import Utils.Validacao;
 
@@ -10,21 +11,26 @@ public class Main {
     public static void main(String[] args) {
         String payload = "USER:  123|ID  :acc_br_99|VAL:1500,75|COIN:BTC|HASH:  7a8b9c";
         double limite = 10000;
-        TransactionDTO transactionDTO = Mapper.parsePayload(payload);
+        try {
+            TransactionDTO transactionDTO = Mapper.parsePayload(payload);
 
-        String erroMsg = Validacao.isValidTransation(transactionDTO);
+            ValidationResult validationResult = Validacao.isValidTransation(transactionDTO);
 
-        BigDecimal valorTotal = new ProcessamentoFinanceiro().processar(transactionDTO.value());
+            if (validationResult.isValid()) {
+                BigDecimal valorTotal = new ProcessamentoFinanceiro().processar(transactionDTO.value());
 
-        if (!erroMsg.isEmpty()) {
-            System.out.println(erroMsg);
-            return;
+                if (valorTotal.compareTo(BigDecimal.valueOf(limite)) > 0) {
+                    System.out.println("Limite atingido");
+                } else {
+                    System.out.println(valorTotal.setScale(2, RoundingMode.HALF_UP));
+                }
+            } else {
+                validationResult.errorMessage().forEach(System.out::println);
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao processar payload: " + e.getMessage());
         }
 
-        if (valorTotal.compareTo(BigDecimal.valueOf(limite)) > 0) {
-            System.out.println("Limite atingido");
-        } else {
-            System.out.println(valorTotal.setScale(2, RoundingMode.HALF_UP));
-        }
     }
 }

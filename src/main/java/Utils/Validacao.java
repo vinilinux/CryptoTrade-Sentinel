@@ -1,23 +1,23 @@
 package Utils;
 
 import DTOs.TransactionDTO;
+import DTOs.ValidationResult;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class Validacao {
-    public static String isValidTransation(TransactionDTO transactionDTO) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(validaUser(transactionDTO.user()));
-        stringBuilder.append(validaHash(transactionDTO.hash()));
-        return stringBuilder.toString();
-    }
+    private static final Pattern USER_PATTERN = Pattern.compile("^\\d+$");
+    private static final Pattern HASH_PATTERN = Pattern.compile("^[a-zA-Z0-9]+$");
 
-    private static String validaHash(String hash) {
-        return hash.codePoints().allMatch(Character::isLetterOrDigit) ? "": "Hash invalido";
+    public static ValidationResult isValidTransation(TransactionDTO transactionDTO) {
+        List<String> errors = new java.util.ArrayList<>();
+        if (!USER_PATTERN.matcher(transactionDTO.user()).matches()) {
+            errors.add("Usuário invalido");
+        }
+        if (!HASH_PATTERN.matcher(transactionDTO.hash()).matches()) {
+            errors.add("Hash invalida");
+        }
+        return new ValidationResult(errors.isEmpty(), errors);
     }
-
-    private static String validaUser(String user) {
-        return user.codePoints().allMatch(Character::isDigit) ? "" : "Usuário invalido";
-    }
-
 }
